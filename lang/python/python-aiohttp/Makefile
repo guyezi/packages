@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2019-2020 CZ.NIC, z. s. p. o. (https://www.nic.cz/)
+# Copyright (C) 2019 CZ.NIC, z. s. p. o. (https://www.nic.cz/)
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -8,18 +8,18 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=aiohttp
-PKG_VERSION:=3.7.1
+PKG_VERSION:=3.5.4
 PKG_RELEASE:=1
 
-PYPI_NAME:=$(PKG_NAME)
-PKG_HASH:=04f9d70f6c4d089be5068d7df6281e638f6820d4f1b1ec3dc012b0b43fa997d2
+PKG_SOURCE:=aiohttp-$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=https://files.pythonhosted.org/packages/source/a/aiohttp/
+PKG_HASH:=9c4c83f4fa1938377da32bc2d59379025ceeee8e24b89f72fcbccd8ca22dc9bf
 
 PKG_MAINTAINER:=Josef Schlehofer <pepe.schlehofer@gmail.com>
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
 PKG_CPE_ID:=cpe:/a:aio-libs_project:aiohttp
 
-include ../pypi.mk
 include $(INCLUDE_DIR)/package.mk
 include ../python3-package.mk
 
@@ -40,10 +40,11 @@ define Package/python3-aiohttp
 	+python3-codecs \
 	+python3-cgi \
 	+python3-openssl
+  VARIANT:=python3
 endef
 
 define Package/python3-aiohttp/description
-  Asynchronous HTTP client/server framework for asyncio and Python3.
+Asynchronous HTTP client/server framework for asyncio and Python3
 endef
 
 $(eval $(call Py3Package,python3-aiohttp))

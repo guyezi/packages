@@ -12,18 +12,11 @@ validate_section_socat()
 {
 	uci_load_validate socat socat "$1" "$2" \
 		'enable:bool:1' \
-		'SocatOptions:or(string, list(string))'
-}
-
-append_param_command()
-{
-	procd_append_param command "$1"
+		'SocatOptions:string'
 }
 
 socat_instance()
 {
-	local is_list
-
 	[ "$2" = 0 ] || {
 		echo "validation failed"
 		return 1
@@ -33,14 +26,7 @@ socat_instance()
 
 	procd_open_instance
 	procd_set_param command "$PROG"
-	config_get is_list "$1" SocatOptions_LENGTH
-	if [ -z "$is_list" ]; then
-		procd_append_param command $SocatOptions
-	else
-		config_list_foreach "$1" SocatOptions append_param_command
-	fi
-	procd_set_param stdout 1
-	procd_set_param stderr 1
+	procd_append_param command $SocatOptions
 	procd_close_instance
 }
 

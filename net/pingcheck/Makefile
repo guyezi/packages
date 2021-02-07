@@ -37,7 +37,7 @@ endef
 
 define Package/pingcheck/description
 Checks by using "ping" (ICMP echo) or by opening connections to TCP port 80
-whether a configured host (normally on the internet) can be reached via a
+wether a configured host (normally on the internet) can be reached via a
 specific interface. Then makes this information available via ubus and triggers
 "online" and "offline" scripts.
 endef

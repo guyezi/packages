@@ -8,16 +8,20 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=alpine
-PKG_VERSION:=2.24
-PKG_RELEASE:=1
+PKG_VERSION:=2.21.9999
+PKG_RELEASE:=2
 
+PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
-PKG_SOURCE_URL:=http://alpine.x10host.com/alpine/release/src
-PKG_HASH:=651a9ffa0a29e2b646a0a6e0d5a2c8c50f27a07a26a61640b7c783d06d0abcef
+PKG_SOURCE_URL:=http://repo.or.cz/alpine.git
+PKG_SOURCE_VERSION:=d3e6f3932f2af9deca8eed09e30a55e9bd524362
+PKG_MIRROR_HASH:=72f9e8c4c3ecbd5f73f527af98ad23f716fcede3af0ab0400c6e0bc9b1288e30
 
 PKG_MAINTAINER:=Antti Seppälä <a.seppala@gmail.com>
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
+
+PKG_FIXUP:=autoreconf
 
 PKG_INSTALL:=1
 PKG_BUILD_PARALLEL:=1
@@ -55,7 +59,6 @@ endef
 define Package/alpine-nossl
 $(call Package/alpine/Default)
   TITLE+= (without OpenSSL support)
-  DEPENDS+= @BROKEN
   VARIANT:=nossl
 endef
 
@@ -77,7 +80,6 @@ CONFIGURE_ARGS += \
 	--disable-debug \
 	--disable-mouse \
 	--with-c-client-target=slx \
-	$(if $(CONFIG_IPV6),--with,--without)-ipv6
 
 CONFIGURE_VARS += \
 	top_builddir=$(PKG_BUILD_DIR)
@@ -86,9 +88,21 @@ ifeq ($(BUILD_VARIANT),ssl)
 	CONFIGURE_ARGS += \
 		--with-ssl-include-dir=$(STAGING_DIR)/usr/include/openssl/. \
 		--with-ssl-lib-dir=$(STAGING_DIR)/usr/lib
-else
+endif
+
+ifeq ($(BUILD_VARIANT),nossl)
 	CONFIGURE_ARGS += \
 		--without-ssl
+endif
+
+ifeq ($(CONFIG_BUILD_NLS),y)
+  DISABLE_NLS:=
+endif
+
+ifeq ($(CONFIG_IPV6),y)
+  DISABLE_IPV6:=
+else
+  DISABLE_IPV6:=--without-ipv6
 endif
 
 define Build/Compile
@@ -103,7 +117,7 @@ endef
 
 define Package/alpine/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/alpine $(1)/usr/bin/
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/$(PKG_NAME) $(1)/usr/bin/$(PKG_NAME)
 endef
 
 Package/alpine-nossl/install = $(Package/alpine/install)

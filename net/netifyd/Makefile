@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016-2020 eGloo, Incorporated
+# Copyright (C) 2016-2019 eGloo, Incorporated
 #
 # This is free software, licensed under the GNU General Public License v2.
 
@@ -16,10 +16,10 @@ PKG_INSTALL:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://gitlab.com/netify.ai/public/netify-agent.git
-PKG_SOURCE_DATE:=2020-09-15
-PKG_SOURCE_VERSION:=v3.05
-#PKG_SOURCE_VERSION:=09fa5fb202ba95ee2d73a4eb0fefe9265d15c780
-PKG_MIRROR_HASH:=2bcaa54f1660a30070f0c79a79259e96f169a9c7a0fe4a1195bb74f7de184204
+PKG_SOURCE_DATE:=2019-06-06
+PKG_SOURCE_VERSION:=v2.88
+#PKG_SOURCE_VERSION:=367ddd2fca4b2edd5e71145e2adea1b58f750214
+PKG_MIRROR_HASH:=8ead41dc074a71626609bced1d584f8df87e39f5ad76dcca76021c1737150089
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -28,7 +28,7 @@ define Package/netifyd
   CATEGORY:=Network
   TITLE:=Netify Agent
   URL:=http://www.netify.ai/
-  DEPENDS:=+ca-bundle +libcurl +libmnl +libnetfilter-conntrack +libpcap +zlib +libpthread @!USE_UCLIBC
+  DEPENDS:=+libcurl +libmnl +libnetfilter-conntrack +libjson-c +libpcap +zlib +libpthread @!USE_UCLIBC
   # Explicitly depend on libstdcpp rather than $(CXX_DEPENDS).  At the moment
   # std::unordered_map is only available via libstdcpp which is required for
   # performance reasons.
@@ -45,19 +45,16 @@ endef
 
 define Package/netifyd/conffiles
 /etc/netifyd.conf
-/etc/config/netifyd
-/etc/netify.d/agent.uuid
-/etc/netify.d/serial.uuid
-/etc/netify.d/site.uuid
 endef
 
-TARGET_CFLAGS+=-ffunction-sections -fdata-sections -Wno-psabi
-TARGET_CXXFLAGS+=-ffunction-sections -fdata-sections -Wno-psabi
+TARGET_CFLAGS+=-ffunction-sections -fdata-sections
+TARGET_CXXFLAGS+=-ffunction-sections -fdata-sections
 TARGET_LDFLAGS+=-Wl,--gc-sections
 
 CONFIGURE_ARGS+= \
 	--sharedstatedir=/var/run \
 	--enable-lean-and-mean \
+	--disable-ncurses \
 	--disable-libtcmalloc \
 	--without-systemdsystemunitdir \
 	--without-tmpfilesdir
@@ -89,8 +86,6 @@ endef
 define Package/netifyd/install
 	$(INSTALL_DIR) $(1)/etc
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/deploy/netifyd.conf $(1)/etc
-	$(INSTALL_DIR) $(1)/etc/config
-	$(INSTALL_CONF) ./files/netifyd.config $(1)/etc/config/netifyd
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/netifyd.init $(1)/etc/init.d/netifyd
 	$(INSTALL_DIR) $(1)/usr/sbin

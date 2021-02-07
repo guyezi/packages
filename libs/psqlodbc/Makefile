@@ -27,7 +27,7 @@ CONFIGURE_ARGS += \
 	--with-libpq=$(STAGING_DIR)/usr
 
 define Package/psqlodbc/Default
-  SUBMENU:=Database
+  SUBMENU:=database
   URL:=https://odbc.postgresql.org/
   SECTION:=libs
   CATEGORY:=Libraries

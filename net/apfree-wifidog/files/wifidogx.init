@@ -9,7 +9,8 @@ USE_PROCD=1
 PROG=/usr/bin/wifidogx
 CONFIGFILE=/tmp/wifidogx.conf
 
-extra_command "status" "Print the status of the service"
+EXTRA_COMMANDS="status"
+EXTRA_HELP="        status Print the status of the service"
 
 PX5G_BIN="/usr/sbin/px5g"
 OPENSSL_BIN="/usr/bin/openssl"
@@ -49,7 +50,7 @@ prepare_mqtt_conf() {
 
 	config_get serveraddr "$cfg" "serveraddr"
 	config_get serverport "$cfg" "serverport"
-	[ -z "${serveraddr}" ] || [ -z "${serverport}" ] && return 1
+	[ -z "${serveraddr}" -o -z "${serverport}" ] && return 1
 
 	cat <<-EOF >>${CONFIGFILE}
 		MQTT {
@@ -61,7 +62,7 @@ prepare_mqtt_conf() {
 
 prepare_wifidog_conf() {
 	local cfg=$1
-	local disabled
+	local enable
 	local gateway_id
 	local gateway_interface
 	local auth_server_hostname
@@ -95,11 +96,11 @@ prepare_wifidog_conf() {
 
 	[ -f ${CONFIGFILE} ] && rm -f ${CONFIGFILE}
 
-	config_get disabled "${cfg}" "disabled" 1
-	if [ "${disabled}" = "1" ]; then
+	config_get enable "${cfg}" "disabled" 0
+	[ "${enable}" = "0" ] || {
 		echo "wifidogx disabled in /etc/config/wifidogx file, please set disabled to 0 to enable it" >&2
 		return
-	fi
+	}
 
 	default_gateway_id=$(sed -e 's/://g' /sys/class/net/br-lan/address)
 
@@ -184,7 +185,7 @@ prepare_wifidog_conf() {
 		GatewayID $gateway_id
 		GatewayInterface $gateway_interface
 		Externalinterface $external_interface
-
+ 
 		AuthServer {
 			Hostname $auth_server_hostname
 			HTTPPort $auth_server_port
@@ -195,7 +196,7 @@ prepare_wifidog_conf() {
 			$set_auth_server_path_ping
 			$set_auth_server_path_auth
 		}
-
+ 
 		$set_delta_traffic
 		CheckInterval $check_interval
 		ClientTimeout $client_timeout
@@ -215,21 +216,21 @@ prepare_wifidog_conf() {
 		FirewallRuleSet global {
 			$set_firewall_rule_global
 		}
-
+ 
 		FirewallRuleSet validating-users {
 			$set_firewall_rule_validating_users
 			FirewallRule allow to 0.0.0.0/0
 		}
-
+ 
 		FirewallRuleSet known-users {
 			$set_firewall_rule_known_users
 			FirewallRule allow to 0.0.0.0/0
 		}
-
+ 
 		FirewallRuleSet auth-is-down {
 			$set_firewall_rule_auth_is_down
 		}
-
+ 
 		FirewallRuleSet unknown-users {
 			$set_firewall_rule_unknown_users
 			FirewallRule allow udp port 53
@@ -237,7 +238,7 @@ prepare_wifidog_conf() {
 			FirewallRule allow udp port 67
 			FirewallRule allow tcp port 67
 		}
-
+ 
 		FirewallRuleSet locked-users {
 			$set_firewall_rule_locked_users
 			FirewallRule block to 0.0.0.0/0
@@ -249,19 +250,19 @@ init_config() {
 	config_load wifidogx
 	config_foreach prepare_wifidog_conf wifidog
 
-	if [ ! -f ${CONFIGFILE} ]; then
+	[ ! -f ${CONFIGFILE} ] && {
 		echo "no wifidogx.conf, exit..." >&2
 		exit
-	fi
+	}
 
-	if [ ! -s "${APFREE_CERT}" ] || [ ! -s "${APFREE_KEY}" ]; then
+	[ -s "${APFREE_CERT}" -a -s "${APFREE_KEY}" ] || {
 		generate_keys
-	fi
+	}
 
-	if [ ! -s ${APFREE_KEY} ] || [ ! -s ${APFREE_CERT} ]; then
+	[ -s ${APFREE_KEY} -a -s ${APFREE_CERT} ] || {
 		echo "no cert or key, exit..." >&2
 		exit
-	fi
+	}
 
 	config_foreach prepare_mqtt_conf mqtt
 
@@ -279,6 +280,6 @@ start_service() {
 	procd_close_instance
 }
 
-status_service() {
+status() {
 	/usr/bin/wdctlx status
 }

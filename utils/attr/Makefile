@@ -9,17 +9,18 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=attr
 PKG_VERSION:=2.4.48
-PKG_RELEASE:=2
+PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://git.savannah.nongnu.org/cgit/attr.git/snapshot
 PKG_HASH:=095699f71230ace37e5bc680c6f9d15cf8e53eb38d00b2c46db5cc7e0712e5f3
-
 PKG_MAINTAINER:=Maxim Storchak <m.storchak@gmail.com>
 
-PKG_FIXUP:=autoreconf
+PKG_LICENSE:=LGPL-2.1 GPL-2.0
+PKG_LICENSE_FILES:=doc/COPYING doc/COPYING.LGPL
+
 PKG_INSTALL:=1
-PKG_BUILD_PARALLEL:=1
+PKG_FIXUP:=autoreconf
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -38,8 +39,6 @@ $(call Package/attr/Default)
   SECTION:=utils
   CATEGORY:=Utilities
   TITLE+=utils
-  LICENSE:=GPL-2.0-or-later
-  LICENSE_FILES:=doc/COPYING
   DEPENDS:=+libattr
 endef
 
@@ -48,8 +47,6 @@ $(call Package/attr/Default)
   SECTION:=libs
   CATEGORY:=Libraries
   TITLE+=library
-  LICENSE:=LGPL-2.1-or-later
-  LICENSE_FILES:=doc/COPYING.LGPL
 endef
 
 define Package/libattr/description
@@ -84,8 +81,8 @@ define Package/attr/conffiles
 endef
 
 define Build/InstallDev
-	$(INSTALL_DIR) $(1)/usr/include
-	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig
+	mkdir -p $(1)/usr/include
+	mkdir -p $(1)/usr/lib/pkgconfig
 	$(CP) $(PKG_INSTALL_DIR)/usr/{include,lib} $(1)/usr/
 endef
 

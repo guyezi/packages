@@ -8,26 +8,24 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gpsd
-PKG_VERSION:=3.21
+PKG_VERSION:=3.17
 PKG_RELEASE:=2
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=@SAVANNAH/$(PKG_NAME)
-PKG_HASH:=5512a7d3c2e86be83c5555652e5b4cc9049e8878a4320be7f039eb1a7203e5f0
+PKG_HASH:=68e0dbecfb5831997f8b3d6ba48aed812eb465d8c0089420ab68f9ce4d85e77a
 
 PKG_MAINTAINER:=Pushpal Sidhu <psidhu.devel@gmail.com>
 PKG_LICENSE:=BSD-3-Clause
 PKG_LICENSE_FILES:=COPYING
 PKG_CPE_ID:=cpe:/a:berlios:gps_daemon
 
-PKG_BUILD_DEPENDS:=scons/host
-
 include $(INCLUDE_DIR)/package.mk
-include ../../devel/scons/scons.mk
+include $(INCLUDE_DIR)/scons.mk
 
 define Package/gpsd/Default
   DEPENDS+= +libusb-1.0
-  URL:=https://gpsd.gitlab.io/gpsd/
+  URL:=http://catb.org/gpsd/
 endef
 
 define Package/gpsd/Default/description
@@ -104,7 +102,6 @@ SCONS_OPTIONS += \
 	implicit_link=no \
 	chrpath=no \
 	manbuild=no \
-	sysroot="$(STAGING_DIR)" \
 	target="$(TARGET_CROSS:-=)"
 
 define Build/InstallDev
@@ -113,9 +110,9 @@ define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libgps*.so* $(1)/usr/lib/
 	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig
-	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/libgps.pc $(1)/usr/lib/pkgconfig
-	$(SED) 's,/usr/include,$$$${prefix}/include,g' $(1)/usr/lib/pkgconfig/libgps.pc
-	$(SED) 's,/usr/lib,$$$${exec_prefix}/lib,g' $(1)/usr/lib/pkgconfig/libgps.pc
+	$(CP) \
+		$(PKG_INSTALL_DIR)/usr/lib/pkgconfig/libgps*.pc \
+		$(1)/usr/lib/pkgconfig/
 endef
 
 define Package/gpsd/install

@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libxslt
 PKG_VERSION:=1.1.34
-PKG_RELEASE:=3
+PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:= \
@@ -22,7 +22,6 @@ PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=COPYING
 PKG_CPE_ID:=cpe:/a:xmlsoft:libxslt
 
-PKG_FIXUP:=autoreconf
 PKG_INSTALL:=1
 PKG_BUILD_PARALLEL:=1
 HOST_BUILD_DEPENDS:=libxml2/host
@@ -74,6 +73,7 @@ CONFIGURE_ARGS += \
 	--without-debug \
 	--without-mem-debug \
 	--without-debugger \
+	--without-profiler \
 	--without-plugins
 
 HOST_CONFIGURE_ARGS += \

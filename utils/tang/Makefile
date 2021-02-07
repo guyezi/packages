@@ -8,31 +8,26 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tang
-PKG_VERSION:=7
+PKG_VERSION:=6
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=https://github.com/latchset/$(PKG_NAME)/releases/download/v$(PKG_VERSION)/
-PKG_HASH:=fbe13e4e3103cd24cada7824b63e510cffd650832ecd075fd49b99475a4f9bfa
+PKG_HASH:=1df78b48a52d2ca05656555cfe52bd4427c884f5a54a2c5e37a7b39da9e155e3
 
-PKG_MAINTAINER:=Tibor Dudlák <tibor.dudlak@gmail.com>
-PKG_LICENSE:=GPL-3.0-or-later
-PKG_LICENSE_FILES:=COPYING
-
-PKG_FIXUP:=autoreconf
 PKG_INSTALL:=1
 PKG_BUILD_PARALLEL:=1
 
-include $(INCLUDE_DIR)/package.mk
+PKG_FIXUP:=autoreconf
 
-# This avoids generating man pages
-CONFIGURE_VARS += ac_cv_prog_A2X=
+include $(INCLUDE_DIR)/package.mk
 
 define Package/tang
   SECTION:=utils
   TITLE:=tang v$(PKG_VERSION) - daemon for binding data to the presence of a third party
   DEPENDS:=+libhttp-parser +xinetd +jose +bash
   URL:=https://github.com/latchset/tang
+  MAINTAINER:=Tibor Dudlák <tibor.dudlak@gmail.com>
 endef
 
 define Package/tang/description

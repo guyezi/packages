@@ -1,6 +1,6 @@
 --- a/Lib/distutils/sysconfig.py
 +++ b/Lib/distutils/sysconfig.py
-@@ -451,6 +451,7 @@ def _init_posix():
+@@ -446,6 +446,7 @@ def _init_posix():
          platform=sys.platform,
          multiarch=getattr(sys.implementation, '_multiarch', ''),
      ))
@@ -10,7 +10,7 @@
      global _config_vars
 --- a/Lib/sysconfig.py
 +++ b/Lib/sysconfig.py
-@@ -342,6 +342,7 @@ def get_makefile_filename():
+@@ -344,6 +344,7 @@ def get_makefile_filename():
  
  
  def _get_sysconfigdata_name():
@@ -20,7 +20,7 @@
          abi=sys.abiflags,
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -1533,7 +1533,7 @@ libinstall:	build_all $(srcdir)/Modules/
+@@ -1409,7 +1409,7 @@ libinstall:	build_all $(srcdir)/Modules/
  			esac; \
  		done; \
  	done
@@ -29,7 +29,7 @@
  		$(DESTDIR)$(LIBDEST); \
  	$(INSTALL_DATA) $(srcdir)/LICENSE $(DESTDIR)$(LIBDEST)/LICENSE.txt
  ifeq (@COMPILE_ALL_TESTS@,yes)
-@@ -1691,7 +1691,7 @@ sharedinstall: sharedmods
+@@ -1554,7 +1554,7 @@ sharedinstall: sharedmods
  		--install-scripts=$(BINDIR) \
  		--install-platlib=$(DESTSHARED) \
  		--root=$(DESTDIR)/
@@ -40,7 +40,7 @@
  # Here are a couple of targets for MacOSX again, to install a full
 --- a/configure
 +++ b/configure
-@@ -2977,7 +2977,7 @@ $as_echo_n "checking for python interpre
+@@ -2936,7 +2936,7 @@ $as_echo_n "checking for python interpre
  	fi
          { $as_echo "$as_me:${as_lineno-$LINENO}: result: $interp" >&5
  $as_echo "$interp" >&6; }
@@ -49,15 +49,15 @@
      fi
  elif test "$cross_compiling" = maybe; then
      as_fn_error $? "Cross compiling required --host=HOST-TUPLE and --build=ARCH" "$LINENO" 5
-@@ -15383,7 +15383,7 @@ fi
- 
+@@ -15294,7 +15294,7 @@ LDVERSION='$(VERSION)$(ABIFLAGS)'
+ $as_echo "$LDVERSION" >&6; }
  
  
 -if test x$PLATFORM_TRIPLET = x; then
 +if true ; then
-   LIBPL='$(prefix)'"/${PLATLIBDIR}/python${VERSION}/config-${LDVERSION}"
+   LIBPL='$(prefix)'"/lib/python${VERSION}/config-${LDVERSION}"
  else
-   LIBPL='$(prefix)'"/${PLATLIBDIR}/python${VERSION}/config-${LDVERSION}-${PLATFORM_TRIPLET}"
+   LIBPL='$(prefix)'"/lib/python${VERSION}/config-${LDVERSION}-${PLATFORM_TRIPLET}"
 --- a/configure.ac
 +++ b/configure.ac
 @@ -75,7 +75,7 @@ if test "$cross_compiling" = yes; then
@@ -69,12 +69,12 @@
      fi
  elif test "$cross_compiling" = maybe; then
      AC_MSG_ERROR([Cross compiling required --host=HOST-TUPLE and --build=ARCH])
-@@ -4812,7 +4812,7 @@ fi],
+@@ -4774,7 +4774,7 @@ AC_MSG_RESULT($LDVERSION)
  
  dnl define LIBPL after ABIFLAGS and LDVERSION is defined.
  AC_SUBST(PY_ENABLE_SHARED)
 -if test x$PLATFORM_TRIPLET = x; then
 +if true ; then
-   LIBPL='$(prefix)'"/${PLATLIBDIR}/python${VERSION}/config-${LDVERSION}"
+   LIBPL='$(prefix)'"/lib/python${VERSION}/config-${LDVERSION}"
  else
-   LIBPL='$(prefix)'"/${PLATLIBDIR}/python${VERSION}/config-${LDVERSION}-${PLATFORM_TRIPLET}"
+   LIBPL='$(prefix)'"/lib/python${VERSION}/config-${LDVERSION}-${PLATFORM_TRIPLET}"

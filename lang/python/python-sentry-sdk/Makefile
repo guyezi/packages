@@ -8,17 +8,18 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=python-sentry-sdk
-PKG_VERSION:=0.19.2
+PKG_VERSION:=0.12.3
 PKG_RELEASE:=1
 
-PYPI_NAME:=sentry-sdk
-PKG_HASH:=17b725df2258354ccb39618ae4ead29651aa92c01a92acf72f98efe06ee2e45a
+PKG_SOURCE:=sentry-sdk-$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=https://files.pythonhosted.org/packages/source/s/sentry-sdk/
+PKG_HASH:=15e51e74b924180c98bcd636cb4634945b0a99a124d50b433c3a9dc6a582e8db
+PKG_BUILD_DIR:=$(BUILD_DIR)/sentry-sdk-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Josef Schlehofer <josef.schlehofer@nic.cz>
 PKG_LICENSE:=BSD-2-Clause
 PKG_LICENSE_FILES:=LICENSE
 
-include ../pypi.mk
 include $(INCLUDE_DIR)/package.mk
 include ../python3-package.mk
 
@@ -33,6 +34,7 @@ define Package/python3-sentry-sdk
 	+python3-light \
 	+python3-logging \
 	+python3-urllib3
+  VARIANT:=python3
 endef
 
 define Package/python3-sentry-sdk/description

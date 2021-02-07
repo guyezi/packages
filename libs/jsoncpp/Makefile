@@ -8,27 +8,18 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=jsoncpp
-PKG_VERSION:=1.9.4
+PKG_VERSION:=1.8.4
 PKG_RELEASE:=1
-
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://codeload.github.com/open-source-parsers/jsoncpp/tar.gz/$(PKG_VERSION)?
-PKG_HASH:=e34a628a8142643b976c7233ef381457efad79468c67cb1ae0b83a33d7493999
-
-PKG_MAINTAINER:=Jan Pavlinec <jan.pavlinec@nic.cz>
+PKG_MAINTAINER:=
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
 
-PKG_BUILD_PARALLEL:=1
-CMAKE_INSTALL:=1
-
-PKG_BUILD_DEPENDS:=meson/host
+PKG_SOURCE_URL:=https://codeload.github.com/open-source-parsers/jsoncpp/tar.gz/$(PKG_VERSION)?
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+PKG_HASH:=c49deac9e0933bcb7044f08516861a2d560988540b23de2ac1ad443b219afdb6
 
 include $(INCLUDE_DIR)/package.mk
-include ../../devel/meson/meson.mk
-
-HOSTCC=$(HOSTCC_NOCACHE)
-HOSTCXX=$(HOSTCXX_NOCACHE)
+include $(INCLUDE_DIR)/cmake.mk
 
 define Package/jsoncpp
   SECTION:=libs
@@ -47,24 +38,23 @@ define Package/jsoncpp/description
   convenient format to store user input files.
 endef
 
-MESON_ARGS += \
-	-Db_lto=true \
-	-Dtests=false
-
-TARGET_LDFLAGS += -Wl,--gc-sections
-
-define Build/InstallDev
-	$(INSTALL_DIR) $(1)/usr/include
-	$(CP) $(PKG_INSTALL_DIR)/usr/include/json $(1)/usr/include/
-	$(INSTALL_DIR) $(1)/usr/lib
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libjsoncpp.so* $(1)/usr/lib/
-	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/jsoncpp.pc $(1)/usr/lib/pkgconfig/
-endef
+CMAKE_OPTIONS += \
+	-DBUILD_SHARED_LIBS:BOOL=ON \
+	-DBUILD_STATIC_LIBS:BOOL=OFF \
+	-DJSONCPP_WITH_TESTS:BOOL=OFF
 
 define Package/jsoncpp/install
 	$(INSTALL_DIR) $(1)/usr/lib/
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libjsoncpp.so* $(1)/usr/lib/
+endef
+
+define Build/InstallDev
+	$(INSTALL_DIR) $(1)/usr/include
+	$(CP) $(PKG_INSTALL_DIR)/usr/include/json $(1)/usr/include
+	$(INSTALL_DIR) $(1)/usr/lib/
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libjsoncpp.so* $(1)/usr/lib/
+	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/jsoncpp.pc $(1)/usr/lib/pkgconfig/
 endef
 
 $(eval $(call BuildPackage,jsoncpp))

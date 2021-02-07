@@ -7,9 +7,11 @@ Description: Fix download stalling on recent libevhtp
   [2] https://github.com/haiwen/seafile/issues/1119
 Forwarded: no
 
---- a/server/access-file.c
-+++ b/server/access-file.c
-@@ -665,7 +665,7 @@ do_file(evhtp_request_t *req, SeafRepo *
+Index: seafile-server/server/access-file.c
+===================================================================
+--- seafile-server.orig/server/access-file.c	2018-02-01 12:23:53.209308343 +0100
++++ seafile-server/server/access-file.c	2018-02-01 12:23:53.205308288 +0100
+@@ -618,7 +618,7 @@
      /* Block any new request from this connection before finish
       * handling this request.
       */
@@ -18,7 +20,7 @@ Forwarded: no
  
      /* Kick start data transfer by sending out http headers. */
      evhtp_send_reply_start(req, EVHTP_RES_OK);
-@@ -1030,7 +1030,7 @@ do_file_range (evhtp_request_t *req, Sea
+@@ -967,7 +967,7 @@
      /* Block any new request from this connection before finish
       * handling this request.
       */
@@ -27,7 +29,7 @@ Forwarded: no
  
      /* Kick start data transfer by sending out http headers. */
      evhtp_send_reply_start(req, EVHTP_RES_PARTIAL);
-@@ -1100,7 +1100,7 @@ start_download_zip_file (evhtp_request_t
+@@ -1032,7 +1032,7 @@
      /* Block any new request from this connection before finish
       * handling this request.
       */
@@ -36,7 +38,7 @@ Forwarded: no
  
      /* Kick start data transfer by sending out http headers. */
      evhtp_send_reply_start(req, EVHTP_RES_OK);
-@@ -1444,7 +1444,7 @@ do_block(evhtp_request_t *req, SeafRepo
+@@ -1365,7 +1365,7 @@
      /* Block any new request from this connection before finish
       * handling this request.
       */
@@ -45,9 +47,11 @@ Forwarded: no
  
      /* Kick start data transfer by sending out http headers. */
      evhtp_send_reply_start(req, EVHTP_RES_OK);
---- a/server/upload-file.c
-+++ b/server/upload-file.c
-@@ -2196,6 +2196,7 @@ out:
+Index: seafile-server/server/upload-file.c
+===================================================================
+--- seafile-server.orig/server/upload-file.c	2018-02-01 12:23:53.209308343 +0100
++++ seafile-server/server/upload-file.c	2018-02-01 12:25:14.542400155 +0100
+@@ -2054,6 +2054,7 @@
      if (res != EVHTP_RES_OK) {
          /* Don't receive any data before the connection is closed. */
          //evhtp_request_pause (req);
@@ -55,7 +59,7 @@ Forwarded: no
  
          /* Set keepalive to 0. This will cause evhtp to close the
           * connection after sending the reply.
-@@ -2513,6 +2514,7 @@ upload_headers_cb (evhtp_request_t *req,
+@@ -2271,6 +2272,7 @@
  err:
      /* Don't receive any data before the connection is closed. */
      //evhtp_request_pause (req);

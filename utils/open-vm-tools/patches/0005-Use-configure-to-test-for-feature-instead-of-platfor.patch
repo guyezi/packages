@@ -1,6 +1,7 @@
+diff -urN a/configure.ac b/configure.ac
 --- a/configure.ac
 +++ b/configure.ac
-@@ -923,6 +923,7 @@ AC_CHECK_FUNCS(
+@@ -897,6 +897,7 @@
  
  AC_CHECK_FUNCS([ecvt])
  AC_CHECK_FUNCS([fcvt])
@@ -8,7 +9,7 @@
  
  AC_CHECK_FUNC([mkdtemp], [have_mkdtemp=yes])
  
-@@ -1132,10 +1133,13 @@ fi
+@@ -1145,10 +1146,13 @@
  ###
  
  AC_CHECK_HEADERS([crypt.h])
@@ -22,6 +23,7 @@
  AC_CHECK_HEADERS([sys/inttypes.h])
  AC_CHECK_HEADERS([sys/io.h])
  AC_CHECK_HEADERS([sys/param.h]) # Required to make the sys/user.h check work correctly on FreeBSD
+diff -urN a/lib/misc/idLinux.c b/lib/misc/idLinux.c
 --- a/lib/misc/idLinux.c
 +++ b/lib/misc/idLinux.c
 @@ -27,12 +27,9 @@
@@ -38,7 +40,7 @@
  #ifdef __APPLE__
  #include <sys/socket.h>
  #include <TargetConditionals.h>
-@@ -1025,31 +1022,32 @@ Id_EndSuperUser(uid_t uid)  // IN:
+@@ -997,31 +994,32 @@
  static Bool
  IdIsSetUGid(void)
  {
@@ -83,12 +85,13 @@
  #endif
  }
  #endif
+diff -urN a/lib/nicInfo/nicInfoPosix.c b/lib/nicInfo/nicInfoPosix.c
 --- a/lib/nicInfo/nicInfoPosix.c
 +++ b/lib/nicInfo/nicInfoPosix.c
-@@ -35,9 +35,13 @@
+@@ -34,9 +34,13 @@
+ #include <sys/socket.h>
  #include <sys/stat.h>
  #include <errno.h>
- #include <limits.h>
 -#if defined(__FreeBSD__) || defined(__APPLE__)
 +#if HAVE_SYS_SYSCTL_H
  # include <sys/sysctl.h>

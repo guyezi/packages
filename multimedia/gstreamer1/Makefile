@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gstreamer1
-PKG_VERSION:=1.18.1
-PKG_RELEASE:=1
+PKG_VERSION:=1.16.2
+PKG_RELEASE:=2
 
 PKG_SOURCE:=gstreamer-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://gstreamer.freedesktop.org/src/gstreamer
-PKG_HASH:=79df8de21f284a105a5c1568527f8c559c583c85c0f2bd7bdb5b0372b8beecba
+PKG_HASH:=e3f044246783fd685439647373fa13ba14f7ab0b346eadd06437092f8419e94e
 PKG_BUILD_DIR:=$(BUILD_DIR)/gstreamer-$(PKG_VERSION)
 
 PKG_MAINTAINER:=W. Michael Petullo <mike@flyn.org> \
@@ -23,7 +23,7 @@ PKG_LICENSE_FILES:=COPYING
 PKG_CPE_ID:=cpe:/a:gstreamer_project:gstreamer
 
 PKG_INSTALL:=1
-PKG_BUILD_DEPENDS:=meson/host glib2/host gettext-full/host
+PKG_BUILD_DEPENDS:=meson/host glib2/host
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
@@ -121,16 +121,14 @@ MESON_ARGS += \
 	-Dregistry=true \
 	-Dtracer_hooks=false \
 	-Dptp-helper-setuid-user=none \
-	-Dptp-helper-setuid-group=none \
+	-Dextra-checks=false \
 	-Doption-parsing=true \
 	-Dpoisoning=false \
-	-Dmemory-alignment=malloc \
 	-Dcheck=enabled \
 	-Dlibunwind=disabled \
 	-Dlibdw=disabled \
 	-Ddbghelp=disabled \
 	-Dbash-completion=disabled \
-	-Dcoretracers=disabled \
 	-Dexamples=disabled \
 	-Dbenchmarks=disabled \
 	-Dtools=enabled \
@@ -138,9 +136,7 @@ MESON_ARGS += \
 	-Dintrospection=disabled \
 	-Dnls=enabled \
 	-Dgobject-cast-checks=disabled \
-	-Dglib-asserts=disabled \
-	-Dextra-checks=disabled \
-	-Ddoc=disabled
+	-Dglib-asserts=disabled
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/include/gstreamer-$(GST_VERSION)

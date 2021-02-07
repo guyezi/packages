@@ -8,19 +8,19 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gnurl
-PKG_VERSION:=7.72.0
-PKG_RELEASE:=2
+PKG_VERSION:=7.65.1
+PKG_RELEASE:=1
 
+PKG_SOURCE_URL:=https://ftp.gnu.org/gnu/gnunet
+
+PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=@GNU/gnunet
-PKG_HASH:=b1e72be03fcf9b3fdaf01ae0702c686e9de10f67ef538918447c9e81555694f8
+PKG_HASH:=37bb87993f9219f4c76195031f1b0311afde157a1b852d54f570e3195ad7af01
 
-PKG_MAINTAINER:=Daniel Golle <daniel@makrotopia.org>
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=COPYING
 
 PKG_FIXUP:=autoreconf
-PKG_INSTALL:=1
 PKG_BUILD_PARALLEL:=1
 
 include $(INCLUDE_DIR)/package.mk
@@ -28,7 +28,8 @@ include $(INCLUDE_DIR)/package.mk
 define Package/gnurl/Default
   SECTION:=net
   CATEGORY:=Network
-  URL:=https://gnunet.org/en/gnurl.html
+  URL:=https://gnunet.org/gnurl
+  MAINTAINER:=Daniel Golle <daniel@makrotopia.org>
 endef
 
 define Package/gnurl
@@ -70,7 +71,6 @@ CONFIGURE_ARGS += \
 	--without-ssl \
 	--without-winssl \
 	--without-darwinssl \
-	--without-zstd \
 	--disable-ares \
 	--disable-sspi \
 	--disable-crypto-auth \
@@ -93,13 +93,20 @@ CONFIGURE_ARGS += \
 	--disable-manual \
 	--disable-verbose
 
+define Build/Compile
+	+$(MAKE) $(PKG_JOBS) -C $(PKG_BUILD_DIR) \
+		DESTDIR="$(PKG_INSTALL_DIR)" \
+		CC="$(TARGET_CC)" \
+		install
+endef
+
 define Build/InstallDev
 	$(INSTALL_DIR) $(2)/bin $(1)/usr/bin $(1)/usr/include/gnurl $(1)/usr/lib $(1)/usr/lib/pkgconfig
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/gnurl-config $(1)/usr/bin/
 	$(CP) $(PKG_INSTALL_DIR)/usr/include/gnurl/*.h $(1)/usr/include/gnurl
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libgnurl.{a,so*} $(1)/usr/lib/
 	$(CP) $(PKG_BUILD_DIR)/libgnurl.pc $(1)/usr/lib/pkgconfig/
-	$(SED) 's,^\(prefix\|exec_prefix\)=.*,\1=$(STAGING_DIR)/usr,g' $(1)/usr/bin/gnurl-config
+	$(SED) 's,-L$$$${exec_prefix}/lib,,g' $(1)/usr/bin/gnurl-config
 	[ -n "$(TARGET_LDFLAGS)" ] && $(SED) 's#$(TARGET_LDFLAGS)##g' $(1)/usr/lib/pkgconfig/libgnurl.pc || true
 	$(LN) $(STAGING_DIR)/usr/bin/gnurl-config $(2)/bin/
 endef

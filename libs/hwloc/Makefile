@@ -6,19 +6,18 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hwloc
-PKG_VERSION:=2.3.0
-PKG_RELEASE:=1
+PKG_VERSION:=2.0.3
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
-PKG_SOURCE_URL:=https://download.open-mpi.org/release/$(PKG_NAME)/v2.3
-PKG_HASH:=b607f6097873f69ef6b4b01e66e0dcb45f9939e8979827284664bbf0d4018a64
+PKG_SOURCE_URL:=https://download.open-mpi.org/release/$(PKG_NAME)/v2.0
+PKG_HASH:=e393aaf39e576b329a2bff3096d9618d4e39f416874390b58e6573349554c725
 
-PKG_MAINTAINER:=W. Michael Petullo <mike@flyn.org>
 PKG_LICENSE:=BSD-3-Clause
-PKG_LICENSE_FILES:=COPYING
-
+PKG_MAINTAINER:=W. Michael Petullo <mike@flyn.org>
 PKG_INSTALL:=1
-PKG_BUILD_PARALLEL:=1
+
+PKG_FIXUP:=autoreconf
 
 include $(INCLUDE_DIR)/package.mk
 

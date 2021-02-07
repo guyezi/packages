@@ -28,20 +28,6 @@ start_service() {
 	procd_close_instance
 }
 
-service_triggers() {
-	procd_add_reload_interface_trigger loopback
-	procd_add_reload_interface_trigger lan
-}
-
 reload_service() {
-	# lighttpd graceful restart (SIGUSR1)
-	procd_send_signal lighttpd '*' USR1
+	procd_send_signal lighttpd
 }
-
-relog() {
-	# lighttpd reopen log files (SIGHUP)
-	procd_send_signal lighttpd '*' HUP
-}
-
-EXTRA_COMMANDS="relog"
-EXTRA_HELP="	relog   Reopen log files (without reloading)"

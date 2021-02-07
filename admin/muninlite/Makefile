@@ -8,14 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=muninlite
-PKG_VERSION:=2.1.1
-PKG_RELEASE:=1
+PKG_VERSION:=1.0.4
+PKG_RELEASE:=10
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://github.com/munin-monitoring/$(PKG_NAME)/releases/download/$(PKG_VERSION)/
-PKG_HASH:=427295fe29ac9a7d99d31aa98f3d5dfd382b7e131d0e1193899d54487ca589af
-
-PKG_MAINTAINER:=Jonathan McCrohan <jmccrohan@gmail.com>
+PKG_SOURCE_URL:=@SF/$(PKG_NAME)
+PKG_HASH:=736482dd6d6849d014d975b1f5794f20dda6e123dbba2d8c2f169c8e787e6f7e
 PKG_LICENSE:=GPL-2.0-or-later
 PKG_LICENSE_FILES:=LICENSE
 
@@ -26,7 +24,8 @@ define Package/muninlite
   CATEGORY:=Administration
   DEPENDS:=+xinetd
   TITLE:=Munin node implemented in shell
-  URL:=https://github.com/munin-monitoring/muninlite
+  URL:=http://sourceforge.net/projects/muninlite/
+  PKG_MAINTAINER:=Jonathan McCrohan <jmccrohan@gmail.com>
 endef
 
 define Package/muninlite/Default/description
@@ -36,14 +35,20 @@ endef
 
 define Package/muninlite/install
 	$(INSTALL_DIR) $(1)/usr/sbin/
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/muninlite $(1)/usr/sbin/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/munin-node $(1)/usr/sbin/
 	$(INSTALL_DIR) $(1)/etc/xinetd.d
-	$(INSTALL_DATA) ./files/etc/xinetd.d/muninlite $(1)/etc/xinetd.d/
-	$(INSTALL_DIR) $(1)/etc/munin/plugins
+	$(INSTALL_DATA) ./files/etc/xinetd.d/munin $(1)/etc/xinetd.d/
 endef
 
 define Package/muninlite/conffiles
-/etc/xinetd.d/muninlite
+/etc/xinetd.d/munin
+endef
+
+define Build/Configure
+endef
+
+define Build/Compile
+	$(MAKE) -C $(PKG_BUILD_DIR)
 endef
 
 $(eval $(call BuildPackage,muninlite))

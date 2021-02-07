@@ -8,22 +8,20 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=canutils
-PKG_VERSION:=2020.11.0
-PKG_RELEASE:=1
+PKG_RELEASE=2
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://codeload.github.com/linux-can/can-utils/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=b8e53081c076fca248c39ae9ae5791359a81f1eb3e5fe23ff6fb0d0e1f1033fa
-PKG_BUILD_DIR:=$(BUILD_DIR)/can-utils-$(PKG_VERSION)
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL:=https://github.com/linux-can/can-utils
+PKG_SOURCE_DATE:=2017-02-16
+PKG_SOURCE_VERSION:=cb33a55720716cbe01e6025a2bda74a1b7e492d3
+PKG_MIRROR_HASH:=d9c01eeff3d81a28161ca5c3937ec005a1f49ca3eb97bee0164d53cc66365786
 
 PKG_MAINTAINER:=Anton Glukhov <anton.a.glukhov@gmail.com>
 PKG_LICENSE:=GPL-2.0-or-later
-PKG_LICENSE_FILES:=COPYING
 
-PKG_BUILD_PARALLEL:=1
+PKG_FIXUP:=autoreconf
 
 include $(INCLUDE_DIR)/package.mk
-include $(INCLUDE_DIR)/cmake.mk
 
 define Package/canutils/Default
   SECTION:=utils
@@ -40,8 +38,8 @@ endef
 define GenPlugin
   define Package/$(addprefix canutils-,$(1))
     $(call Package/canutils/Default)
-    TITLE:=Utility $(1) from the CAN utilities
     DEPENDS:=canutils
+    TITLE:=Utility $(1) from the CAN utilities
   endef
 
    define Package/$(addprefix canutils-,$(1))/description
@@ -49,29 +47,30 @@ define GenPlugin
    endef
 endef
 
-FILES:= \
-	asc2log bcmserver canbusload can-calc-bit-timing \
-	candump canfdtest cangen cangw canlogserver canplayer \
-	cansend cansniffer isotpdump isotpperf isotprecv isotpsend \
-	isotpserver isotpsniffer isotptun j1939acd j1939cat j1939spy j1939sr \
-	log2asc log2long slcan_attach slcand slcanpty testj1939
+FILES:=canbusload can-calc-bit-timing candump \
+	cangen cangw canplayer cansniffer cansend \
+	canfdtest asc2log log2asc log2long bcmserver \
+	canlogserver isotpdump isotpperf isotprecv \
+	isotpsend isotpserver isotpsniffer isotptun \
+	slcan_attach slcand slcanpty
+
 
 $(foreach a,$(FILES),$(eval $(call GenPlugin,$(a))))
+
+define Package/canutils/install
+	true
+endef
 
 define PartInstall
 define Package/canutils-$(1)/install
 	$(INSTALL_DIR) $$(1)/usr/bin
 	$(INSTALL_BIN) \
-		$(PKG_INSTALL_DIR)/usr/bin/$(1) \
+		$(PKG_BUILD_DIR)/$(1) \
 		$$(1)/usr/bin/
 endef
 endef
 
 $(foreach file,$(FILES),$(eval $(call PartInstall,$(file))))
-
-define Package/canutils/install
-	true
-endef
 
 $(eval $(call BuildPackage,canutils))
 $(foreach file,$(FILES),$(eval $(call BuildPackage,canutils-$(file))))

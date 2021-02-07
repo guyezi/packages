@@ -1,7 +1,6 @@
 #!/bin/sh /etc/rc.common
 # Copyright (C) 2007-2011 OpenWrt.org
 
-USE_PROCD=1
 START=80
 
 start_instance() {
@@ -15,15 +14,20 @@ start_instance() {
 
 	[ "$enabled" = 1 ] || exit 0
 
-	procd_open_instance
-	procd_set_param command /usr/sbin/autossh -M ${monitorport:-20000} ${ssh}
-	procd_set_param respawn ${respawn_threshold:-3600} ${respawn_timeout:-5} ${respawn_retry:-5}
-	procd_set_param env AUTOSSH_GATETIME="${gatetime:-30}"
-	procd_set_param env AUTOSSH_POLL="${poll:-600}"
-	procd_close_instance
+	export AUTOSSH_GATETIME="${gatetime:-30}"
+	export AUTOSSH_POLL="${poll:-600}"
+	service_start /usr/sbin/autossh -M ${monitorport:-20000} -f ${ssh}
 }
 
-start_service() {
+boot() {
+	return
+}
+
+start() {
 	config_load 'autossh'
 	config_foreach start_instance 'autossh'
+}
+
+stop() {
+	service_stop /usr/sbin/autossh
 }

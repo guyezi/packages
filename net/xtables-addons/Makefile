@@ -9,15 +9,16 @@ include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=xtables-addons
-PKG_VERSION:=3.13
-PKG_RELEASE:=4
-PKG_HASH:=893c0c4ea09759cda1ab7e68f1281d125e59270f7b59e446204ce686c6a76d65
+PKG_VERSION:=2.14
+PKG_RELEASE:=9
+PKG_HASH:=d215a9a8b8e66aae04b982fa2e1228e8a71e7dfe42320df99e34e5000cbdf152
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
-PKG_SOURCE_URL:=https://inai.de/files/xtables-addons/
+PKG_SOURCE_URL:=@SF/xtables-addons
 PKG_BUILD_DEPENDS:=iptables
 PKG_INSTALL:=1
 PKG_BUILD_PARALLEL:=1
+PKG_CHECK_FORMAT_SECURITY:=0
 
 PKG_MAINTAINER:=Jo-Philipp Wich <jo@mein.io>
 PKG_LICENSE:=GPL-2.0
@@ -32,7 +33,7 @@ define Package/xtables-addons
   CATEGORY:=Network
   SUBMENU:=Firewall
   TITLE:=Extensions not distributed in the main Xtables
-  URL:=https://inai.de/projects/xtables-addons/
+  URL:=http://xtables-addons.sourceforge.net/
 endef
 
 # uses GNU configure
@@ -133,39 +134,19 @@ define Package/iptgeoip
   $(call Package/xtables-addons)
   CATEGORY:=Network
   TITLE:=iptables-mod-geoip support scripts for MaxMind GeoIP databases
+  # we could also use wget-nossl but that's more complicated than our
+  # syntax of dependencies permits...
   DEPENDS:=iptables +iptables-mod-geoip \
 		+perl +perlbase-getopt +perlbase-io +perl-text-csv_xs \
-		+perl-net-cidr-lite \
-		+wget-ssl +!BUSYBOX_CONFIG_ZCAT:gzip
+		+!BUSYBOX_CONFIG_WGET:wget +!BUSYBOX_CONFIG_GZIP:gzip +!BUSYBOX_CONFIG_UNZIP:unzip
 endef
-
-define Package/iptgeoip/config
-	menu "Select iptgeoip options"
-		config IPTGEOIP_PRESERVE
-			bool "Preserve across sysupgrades"
-			default n
-			help
-			  Backup and restore during sysupgrade (requires >7MB)
-	endmenu
-endef
-
-ifeq ($(CONFIG_IPTGEOIP_PRESERVE),y)
-define Package/iptgeoip/conffiles
-/usr/share/xt_geoip/
-endef
-endif
 
 define Package/iptgeoip/install
 	$(INSTALL_DIR) $(1)/usr/lib/xtables-addons
 	$(CP) \
 		$(PKG_INSTALL_DIR)/usr/lib/xtables-addons/xt_geoip_{build,dl} \
 		$(1)/usr/lib/xtables-addons/
-	$(INSTALL_DIR) $(1)/usr/bin
-	$(CP) \
-		$(PKG_INSTALL_DIR)/usr/bin/xt_geoip_fetch \
-		$(1)/usr/bin/
 	$(INSTALL_DIR) $(1)/usr/share/xt_geoip
-	touch $(1)/usr/share/xt_geoip/.keep
 endef
 
 
@@ -190,7 +171,6 @@ $(eval $(call BuildTemplate,length2,length2,xt_length2,xt_length2,+kmod-ipt-comp
 $(eval $(call BuildTemplate,logmark,LOGMARK,xt_LOGMARK,xt_LOGMARK,+kmod-ipt-compat-xtables))
 $(eval $(call BuildTemplate,lscan,lscan,xt_lscan,xt_lscan,))
 $(eval $(call BuildTemplate,lua,Lua PacketScript,xt_LUA,LUA/xt_LUA,+kmod-ipt-conntrack-extra))
-$(eval $(call BuildTemplate,proto,PROTO,xt_PROTO,xt_PROTO,))
 $(eval $(call BuildTemplate,psd,psd,xt_psd,xt_psd,))
 $(eval $(call BuildTemplate,quota2,quota2,xt_quota2,xt_quota2,))
 $(eval $(call BuildTemplate,sysrq,SYSRQ,xt_SYSRQ,xt_SYSRQ,+kmod-ipt-compat-xtables +kmod-crypto-hash))

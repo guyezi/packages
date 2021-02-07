@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libiio
-PKG_VERSION:=0.21
-PKG_RELEASE:=3
+PKG_VERSION:=0.16
+PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/analogdevicesinc/libiio/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=03d13165cbeb83b036743cbd9a10e336c728da162714f39d13250a3d94305cac
+PKG_HASH:=5eb3ec24342eb01c49235a1d8a053462f930835a3002e687371b680a9bb150f6
 
 PKG_LICENSE:=LGPL-2.1
 PKG_LICENSE_FILES:=COPYING.txt
@@ -69,7 +69,7 @@ config LIBIIO_NETWORK_BACKEND
 	bool "Enable network backend"
 	depends on PACKAGE_libiio
 	select LIBIIO_XML_BACKEND
-	default y
+	default n
 
 config LIBIIO_USB_BACKEND
 	bool "Enable USB backend"
@@ -78,9 +78,9 @@ config LIBIIO_USB_BACKEND
 	default n
 
 config LIBIIO_XML_BACKEND
-	bool
+	bool "Enable XML backend"
 	depends on PACKAGE_libiio
-	default y
+	default n
 endef
 
 define Package/libiio/description
@@ -133,7 +133,7 @@ endef
 
 define Package/libiio/install
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libiio.so.* $(1)/usr/lib/
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libiio.so* $(1)/usr/lib/
 endef
 
 define Package/iiod/install

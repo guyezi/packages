@@ -8,20 +8,20 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=postfix
-PKG_VERSION:=3.5.8
-PKG_RELEASE:=1
-
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+PKG_RELEASE:=2
+PKG_VERSION:=3.4.4
 PKG_SOURCE_URL:= \
 	https://cdn.postfix.johnriley.me/mirrors/postfix-release/official/ \
 	http://ftp.porcupine.org/mirrors/postfix-release/official/
-PKG_HASH:=22582628cf3edc18c5155c9ff44543dd95a9435fb68135d76a99f572cb07456f
 
+PKG_HASH:=27f2ab631a966a40e002aedc6db9281e5970295fa5fd96b29066e457a4601e34
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_MAINTAINER:=Denis Shulyaka <Shulyaka@gmail.com>
 PKG_LICENSE:=IPL-1.0
 PKG_LICENSE_FILES:=LICENSE
 PKG_CPE_ID:=cpe:/a:postfix:postfix
 
+PKG_BUILD_DEPENDS:=POSTFIX_CDB:tinycdb
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_POSTFIX_TLS \
 	CONFIG_POSTFIX_SASL \
@@ -44,7 +44,7 @@ define Package/postfix
   	postfix=25:postfix=25 \
   	postdrop=26:postdrop=26
   URL:=http://www.postfix.org/
-  DEPENDS:=+POSTFIX_CDB:tinycdb +POSTFIX_TLS:libopenssl +POSTFIX_SASL:libsasl2 +POSTFIX_LDAP:libopenldap +POSTFIX_DB:libdb47 +POSTFIX_SQLITE:libsqlite3 +POSTFIX_MYSQL:libmysqlclient +POSTFIX_PGSQL:libpq +POSTFIX_EAI:icu +POSTFIX_PCRE:libpcre
+  DEPENDS:=+POSTFIX_TLS:libopenssl +POSTFIX_SASL:libsasl2 +POSTFIX_LDAP:libopenldap +POSTFIX_DB:libdb47 +POSTFIX_SQLITE:libsqlite3 +POSTFIX_MYSQL:libmysqlclient +POSTFIX_PGSQL:libpq +POSTFIX_EAI:icu +POSTFIX_PCRE:libpcre
 endef
 
 define Package/postfix/description
@@ -111,7 +111,7 @@ define Package/postfix/config
 	endmenu
 endef
 
-CCARGS=-DNO_NIS -fcommon
+CCARGS=-DNO_NIS
 AUXLIBS=-L$(STAGING_DIR)/usr/lib
 
 ifdef CONFIG_POSTFIX_TLS
@@ -179,7 +179,6 @@ else
 endif
 
 CCARGS+=-DDEF_DB_TYPE=\"$(default_database_type)\"
-TARGET_LDFLAGS += $(if $(CONFIG_USE_GLIBC),-lresolv)
 
 # prevent postfix-install from executing postconf at build time
 # by explicitly providing the default values to postfix-install
@@ -217,7 +216,7 @@ endef
 
 define Build/Compile
 	# Currently postfix has a bug with Makefiles that CCARGS are not passed to the compiler, so we are copying them to CC as a workaround
-	cd $(PKG_BUILD_DIR); $(MAKE) $(TARGET_CONFIGURE_OPTS) CC='$(TARGET_CC) $(CCARGS) $(TARGET_CFLAGS) $(TARGET_LDFLAGS)'
+	cd $(PKG_BUILD_DIR); $(MAKE) $(TARGET_CONFIGURE_OPTS) CC='$(TARGET_CC) $(CCARGS)'
 	$(foreach p, \
 		default_database_type config_directory command_directory daemon_directory \
 		shlib_directory manpage_directory data_directory queue_directory \

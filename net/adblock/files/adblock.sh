@@ -11,7 +11,7 @@
 export LC_ALL=C
 export PATH="/usr/sbin:/usr/bin:/sbin:/bin"
 set -o pipefail
-adb_ver="4.0.8"
+adb_ver="4.0.7"
 adb_enabled=0
 adb_debug=0
 adb_forcedns=0
@@ -50,8 +50,7 @@ adb_loggercmd="$(command -v logger)"
 adb_dumpcmd="$(command -v tcpdump)"
 adb_lookupcmd="$(command -v nslookup)"
 adb_fetchutil=""
-adb_zonelist=""
-adb_portlist=""
+adb_portlist="53 853 5353"
 adb_repiface=""
 adb_replisten="53"
 adb_repchunkcnt="5"
@@ -149,12 +148,6 @@ f_conf()
 			elif [ "${option}" = "adb_safesearchlist" ]
 			then
 				eval "${option}=\"$(printf "%s" "${adb_safesearchlist}") ${value}\""
-			elif [ "${option}" = "adb_zonelist" ]
-			then
-				eval "${option}=\"$(printf "%s" "${adb_zonelist}") ${value}\""
-			elif [ "${option}" = "adb_portlist" ]
-			then
-				eval "${option}=\"$(printf "%s" "${adb_portlist}") ${value}\""
 			fi
 		}
 	}
@@ -560,7 +553,7 @@ f_count()
 #
 f_extconf()
 {
-	local config config_dir config_file section zone port fwcfg
+	local config config_dir config_file port fwcfg
 
 	case "${adb_dns}" in
 		"dnsmasq")
@@ -586,37 +579,33 @@ f_extconf()
 	f_uci "${config}"
 
 	config="firewall"
-	fwcfg="$(uci -qNX show "${config}" | "${adb_awk}" 'BEGIN{FS="[.=]"};/adblock_/{if(zone==$2){next}else{ORS=" ";zone=$2;print zone}}')"
+	fwcfg="$(uci -qNX show "${config}")"
 	if [ "${adb_enabled}" -eq 1 ] && [ "${adb_forcedns}" -eq 1 ] && \
 		[ "$(/etc/init.d/firewall enabled; printf "%u" ${?})" -eq 0 ]
 	then
-		for zone in ${adb_zonelist}
+		for port in ${adb_portlist}
 		do
-			for port in ${adb_portlist}
-			do
-				if [ -z "$(printf "%s" "${fwcfg}" | grep -o -m1 "adblock_${zone}${port}[ |\$]")" ]
-				then
-					uci -q batch <<-EOC
-						set firewall."adblock_${zone}${port}"="redirect"
-						set firewall."adblock_${zone}${port}".name="Adblock DNS (${zone}, ${port})"
-						set firewall."adblock_${zone}${port}".src="${zone}"
-						set firewall."adblock_${zone}${port}".proto="tcp udp"
-						set firewall."adblock_${zone}${port}".src_dport="${port}"
-						set firewall."adblock_${zone}${port}".dest_port="${port}"
-						set firewall."adblock_${zone}${port}".target="DNAT"
-					EOC
-				fi
-				fwcfg="${fwcfg/adblock_${zone}${port}[ |\$]/}"
-			done
+			if [ -z "$(printf "%s" "${fwcfg}" | grep -Fo -m1 "adblock_dns_${port}")" ]
+			then
+				uci -q batch <<-EOC
+					set firewall."adblock_dns_${port}"="redirect"
+					set firewall."adblock_dns_${port}".name="Adblock DNS, port ${port}"
+					set firewall."adblock_dns_${port}".src="lan"
+					set firewall."adblock_dns_${port}".proto="tcp udp"
+					set firewall."adblock_dns_${port}".src_dport="${port}"
+					set firewall."adblock_dns_${port}".dest_port="${port}"
+					set firewall."adblock_dns_${port}".target="DNAT"
+				EOC
+			fi
 		done
-		fwcfg="${fwcfg#"${fwcfg%%[![:space:]]*}"}"
-		fwcfg="${fwcfg%"${fwcfg##*[![:space:]]}"}"
-	fi
-	if [ "${adb_enabled}" -eq 0 ] || [ "${adb_forcedns}" -eq 0 ] || [ -n "${fwcfg}" ]
+	elif [ "${adb_enabled}" -eq 0 ] || [ "${adb_forcedns}" -eq 0 ]
 	then
-		for section in ${fwcfg}
+		for port in ${adb_portlist}
 		do
-			uci_remove firewall "${section}"
+			if [ -n "$(printf "%s" "${fwcfg}" | grep -Fo -m1 "adblock_dns_${port}")" ]
+			then
+				uci_remove firewall "adblock_dns_${port}"
+			fi
 		done
 	fi
 	f_uci "${config}"
@@ -1642,10 +1631,6 @@ adb_awk="$(command -v gawk)"
 if [ -z "${adb_awk}" ]
 then
 	adb_awk="$(command -v awk)"
-	if [ -z "${adb_awk}" ]
-	then
-		f_log "err" "awk not found"
-	fi
 fi
 
 # sort selection

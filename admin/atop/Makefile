@@ -7,15 +7,13 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=atop
 PKG_RELEASE:=1
-PKG_VERSION:=2.6.0
+PKG_VERSION:=2.4.0
+PKG_LICENSE:=GPL-2.0
+PKG_SOURCE_URL:=https://www.atoptool.nl/download/
+PKG_HASH:=be1c010a77086b7d98376fce96514afcd73c3f20a8d1fe01520899ff69a73d69
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://www.atoptool.nl/download/
-PKG_HASH:=9ec2ca3a571692f7efaa095f99a5106432bcb71cc22cd6c49597ef0481058f72
-
 PKG_MAINTAINER:=Toni Uhlig <matzeton@googlemail.com>
-PKG_LICENSE:=GPL-2.0-or-later
-PKG_LICENSE_FILES:=COPYING
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -25,6 +23,7 @@ define Package/atop
   TITLE:=System and process monitor for Linux
   DEPENDS:=+zlib +libncurses
   URL:=https://www.atoptool.nl/
+  MAINTAINER:=Toni Uhlig <matzeton@googlemail.com>
 endef
 
 define Package/atop/description

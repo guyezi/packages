@@ -37,7 +37,7 @@ define Build/Compile
 	$(MAKE) -C "$(LINUX_DIR)" \
 		ARCH="$(LINUX_KARCH)" \
 		CROSS_COMPILE="$(TARGET_CROSS)" \
-		M="$(PKG_BUILD_DIR)" \
+		SUBDIRS="$(PKG_BUILD_DIR)" \
 		V="$(V)" \
 		modules
 endef

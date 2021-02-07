@@ -27,7 +27,6 @@ define Package/nacl
   CATEGORY:=Libraries
   TITLE:=NaCl Networking and Cryptography library
   URL:=http://nacl.cace-project.eu/
-  BUILDONLY:=1
 endef
 
 define Build/Compile

@@ -15,9 +15,11 @@ This closes LP: #737002.
  include/missing.h | 8 +++++++-
  1 file changed, 7 insertions(+), 1 deletion(-)
 
+diff --git a/include/missing.h b/include/missing.h
+index 0a859c4..f50e8fb 100644
 --- a/include/missing.h
 +++ b/include/missing.h
-@@ -71,7 +71,7 @@
+@@ -72,7 +72,7 @@
  #define NAME_MAX	255
  
  /* Byteswap stuff */
@@ -26,7 +28,7 @@ This closes LP: #737002.
  #define NXSwapBigShortToHost(x) 	be16_to_cpu(x)
  #define OSSwapBigToHostInt16(x)		be16_to_cpu(x)
  #define NXSwapBigLongToHost(x)		be32_to_cpu(x)
-@@ -87,6 +87,9 @@
+@@ -88,6 +88,9 @@
  #ifndef be32_to_cpu
  #define be32_to_cpu(x) bswap_32(x)
  #endif
@@ -36,7 +38,7 @@ This closes LP: #737002.
  #ifndef be64_to_cpu
  #define be64_to_cpu(x) bswap_64(x)
  #endif
-@@ -101,6 +104,9 @@
+@@ -102,6 +105,9 @@
  #ifndef be32_to_cpu
  #define be32_to_cpu(x)	(x)
  #endif

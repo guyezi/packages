@@ -6,16 +6,16 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=btrfs-progs
-PKG_VERSION:=5.10
+PKG_VERSION:=5.7
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-v$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=@KERNEL/linux/kernel/people/kdave/btrfs-progs
-PKG_HASH:=e71a0d6dd504f3a5d957fce9a30281eb61ecf991c8af315fe0061a1b97a1d021
+PKG_HASH:=5c2f048b8c814852614b0b262ab2d468ea02774ef01124ebc0ab708df262de5c
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-v$(PKG_VERSION)
 
 PKG_MAINTAINER:=Karel Kočí <karel.koci@nic.cz>
-PKG_LICENSE:=GPL-2.0-only
+PKG_LICENSE:=GPL-2.0-or-later
 PKG_LICENSE_FILES:=COPYING
 
 PKG_INSTALL:=1
@@ -30,16 +30,7 @@ define Package/btrfs-progs
   SUBMENU:=Filesystem
   TITLE:=Btrfs filesystems utilities
   URL:=https://btrfs.wiki.kernel.org/
-  DEPENDS:= \
-    +libattr \
-    +libuuid \
-    +libmount \
-    +zlib \
-    +libblkid \
-    +liblzo \
-    +libpthread \
-    +kmod-fs-btrfs \
-    +BTRFS_PROGS_ZSTD:libzstd
+  DEPENDS:=+libattr +libuuid +zlib +libblkid +liblzo +libpthread +BTRFS_PROGS_ZSTD:libzstd
 endef
 
 define Package/btrfs-progs/description

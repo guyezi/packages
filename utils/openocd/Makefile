@@ -8,15 +8,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=openocd
-PKG_SOURCE_VERSION:=v0.11.0-rc1
-PKG_VERSION:=$(PKG_SOURCE_VERSION)
-PKG_RELEASE:=1
+PKG_SOURCE_VERSION:=0.10.0
+PKG_VERSION:=v$(PKG_SOURCE_VERSION)
+PKG_RELEASE:=2
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_URL:=git://git.code.sf.net/p/openocd/code
-PKG_MIRROR_HASH:=c4a0a6cad821946608c843f557b993e7cfeb0f193e4c0f149ebfbfbfd57054a6
-
+PKG_SOURCE_URL:=@SF/openocd
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_SOURCE_VERSION).tar.bz2
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_SOURCE_VERSION)
+PKG_HASH:=7312e7d680752ac088b8b8f2b5ba3ff0d30e0a78139531847be4b75c101316ae
 PKG_LICENSE:=GPL-2.0
 PKG_LICENSE_FILES:=COPYING
 
@@ -27,8 +26,6 @@ PKG_BUILD_PARALLEL:=1
 PKG_INSTALL:=1
 PKG_FIXUP:=autoreconf
 
-PKG_CONFIG_DEPENDS:=CONFIG_PACKAGE_openocd_with_usb
-
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
 
@@ -37,11 +34,7 @@ define Package/openocd
   CATEGORY:=Utilities
   TITLE:=OpenOCD Utility
   URL:=http://openocd.sf.net/
-  DEPENDS:=+libusb-1.0 \
-	+libusb-compat \
-	+libftdi1 \
-	+hidapi \
-	+libgpiod
+  DEPENDS:=+libusb-1.0 +libusb-compat +libftdi1 +hidapi
 endef
 
 define Package/openocd/description
@@ -62,20 +55,12 @@ the GNU GDB program (and the others who talk GDB protocol, e.g. IDA
 Pro).
 endef
 
-define Build/Prepare
-	$(call Build/Prepare/Default)
-	-$(RM) $(PKG_BUILD_DIR)/guess-rev.sh
-endef
-
 CONFIGURE_ARGS += \
 	--prefix="/usr" \
 	--disable-werror \
 	MAKEINFO=true \
 	--enable-dummy \
-	--enable-sysfsgpio \
-	--enable-linuxgpiod
-
-TARGET_CFLAGS += -DRELSTR=\\\"-$(PKG_VERSION)-$(PKG_RELEASE)-OpenWrt\\\"
+	--enable-sysfsgpio
 
 define Build/Compile
         +$(MAKE_VARS) \

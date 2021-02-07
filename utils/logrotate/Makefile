@@ -51,9 +51,7 @@ define Package/logrotate/conffiles
 /etc/logrotate.conf
 endef
 
-CONFIGURE_ARGS += \
-	$(if $(CONFIG_LOGROTATE_ACL),--with,--without)-acl \
-	--without-selinux
+CONFIGURE_ARGS += $(if $(CONFIG_LOGROTATE_ACL),--with,--without)-acl
 
 define Build/Compile
 	$(call Build/Compile/Default, \

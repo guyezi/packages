@@ -68,7 +68,6 @@ endef
 
 CONFIGURE_ARGS += \
 	--libexecdir=/usr/libexec \
-	--without-libunwind \
 	--without-pam \
 	--with-notify=dnotify \
 	--without-lzma \

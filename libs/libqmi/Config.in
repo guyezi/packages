@@ -1,9 +1,0 @@
-menu "Configuration"
-depends on PACKAGE_libqmi
-
-	config LIBQMI_WITH_MBIM_QMUX
-		bool "Include MBIM QMUX service support"
-		default y
-		help
-		  Compile libqmi with QMI-over-MBIM support
-endmenu
