@@ -10,14 +10,14 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=aMule
 PKG_VERSION:=2.3.2
 PKG_RELEASE:=3
-PKG_REV=4b87b20
+PKG_REV:=4b87b20
 
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-r$(PKG_REV).tar.bz2
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=$(PKG_REV)
-PKG_SOURCE_URL:=https://github.com/amule-project/amule.git
+PKG_SOURCE_URL:=https://gitee.com/guyezi/amule.git
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_BUILD_DEPENDS:=libgd libcryptopp
@@ -72,9 +72,9 @@ CONFIGURE_ARGS+= \
 	--with-libintl-prefix="$(INTL_PREFIX)" \
 	--with-libupnp-prefix="$(STAGING_DIR)/usr" \
 	--without-x \
-	--disable-debug 
+	--disable-debug
 
-TARGET_LDFLAGS += -liconv 
+TARGET_LDFLAGS += -liconv
 
 
 define Build/Configure
@@ -103,7 +103,7 @@ define Package/amule/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/amule{cmd,d} $(1)/usr/bin/
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/webserver/src/amuleweb $(1)/usr/bin/
 	$(CP) $(PKG_BUILD_DIR)/src/webserver/default $(1)/usr/share/amule/webserver
-	
+
 endef
 
 $(eval $(call BuildPackage,amule))
