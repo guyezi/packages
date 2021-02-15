@@ -18,6 +18,12 @@ PKG_SOURCE_URL:=@SF/amule
 PKG_MD5SUM:=d74947f4c35bbea71369f6c112b9f0b8
 PKG_BUILD_DEPENDS:=libgd
 
+PKG_CONFIG_DEPEDS:= CONFIG_AMULE_CRYPTOPP_STATIC_LINKING
+PKG_FIXUP:=autoreconf
+PKG_BUILD_DEPENDS:=libcryptopp libgd
+PKG_BUILD_PARALLEL:=1
+PKG_INSTALL:=1
+
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
 
@@ -27,7 +33,14 @@ define Package/amule
   CATEGORY:=Network
   TITLE:=A multi-platform eMule-like ed2k client
   URL:=http://www.amule.org/
-  DEPENDS:=+libpng +libpthread +libncurses +libreadline +libwxbase +libcryptoxx
+  DEPENDS:=+libpng +libpthread +libncurses +libreadline +libwxbase +libupnp +libbfd \
+        $(ICONV_DEPENDS) $(INTL_DEPENDS) +!AMULE_CRYPTOPP_STATIC_LINKING:libcryptopp
+endef
+
+define Package/amule/config
+       config AMULE_CRYPTOPP_STATIC_LINKING
+             bool "Link libcryptopp statically"
+            default n
 endef
 
 CONFIGURE_ARGS+= \
@@ -51,7 +64,8 @@ CONFIGURE_ARGS+= \
 	--disable-fileview \
 	--disable-plasmamule \
 	--without-wxdebug \
-	\
+        --enable-dlp \
+        --enable-upnp \
 	--with-zlib="$(STAGING_DIR)/usr" \
 	--with-gdlib-prefix="$(STAGING_DIR)/usr" \
 	--with-libpng-prefix="$(STAGING_DIR)/usr" \
@@ -59,10 +73,22 @@ CONFIGURE_ARGS+= \
 	--with-crypto-prefix="$(STAGING_DIR)/usr" \
 	--with-libiconv-prefix="$(ICONV_PREFIX)" \
 	--with-libintl-prefix="$(INTL_PREFIX)" \
-	--without-x \
+        --with-libupnp-prefix="$(STAGING_DIR)/usr" \
+	--without-x
+
+MAKE_FLAGS += HOSTCC="$(HOSTCC)"
 
 TARGET_LDFLAGS += \
 	-liconv
+
+define Build/Configure
+       cd $(PKG_BUILD_DIR); $(SHELL) autogen.sh
+       $(call Build/Configure/Default)
+   ifeq ($(CONFIG_AMULE_CRYPTOPP_STATIC_LINKING),y)
+       $(SED) 's;^CRYPTOPP_LIBS.*;CRYPTOPP_LIBS \= "$(STAGING_DIR)/usr/lib/libcryptopp.a";g' \
+            $(PKG_BUILD_DIR)/src/Makefile
+endif
+endef
 
 define Build/Compile
 	$(MAKE) -C $(PKG_BUILD_DIR) \
