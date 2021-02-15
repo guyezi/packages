@@ -80,7 +80,7 @@ CONFIGURE_ARGS+= \
 	--with-libintl-prefix="$(INTL_PREFIX)" \
 	--with-libupnp-prefix="$(STAGING_DIR)/usr" \
 	--without-x \
-	--disable-debug 
+	--disable-debug
 
 MAKE_FLAGS += HOSTCC="$(HOSTCC)"
 
