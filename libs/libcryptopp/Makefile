@@ -16,52 +16,41 @@ PKG_SOURCE_URL:=http://www.cryptopp.com/
 PKG_MD5SUM:=e58bd199cec1c48f62ad6eac5c024b6c
 #PKG_MIRROR_HASH:=db38a15a6b1c337c665e2ebeb731dd0754b05e45504897d0f2fe4ae9f5ee589a
 
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)/$(PKG_NAME)-$(PKG_VERSION)
-
-CMAKE_INSTALL:=1
+PKG_FIXUP:=autoreconf
+PKG_BUILD_PARALLEL:=1
 
 include $(INCLUDE_DIR)/package.mk
-include $(INCLUDE_DIR)/cmake.mk
+
+UNZIP_CMD:=unzip -q -d $(PKG_BUILD_DIR) $(DL_DIR)/$(PKG_SOURCE)
 
 define Package/libcryptopp
-  SECTION:=libs
-  CATEGORY:=Libraries
-  DEPENDS:=+libpthread +libstdcpp
-  TITLE:=Crypto++ is library for creating C++ programs which use cryptographic algorithms
-  URL:=http://packages.debian.org/sid/libcrypto++-dev
+       SECTION:=libs
+       CATEGORY:=Libraries
+       TITLE:=Crypto++ is library for creating C++ programs which use cryptographic algorithms
+       URL:=https://packages.debian.org/sid/libcrypto++-dev
+       DEPENDS:=+libpthread +libstdcpp
 endef
 
 define Package/package/libcryptopp
-  Crypto++ is library for creating C++ programs which use cryptographic algorithms.
-  The library uses a Pipes & Filters architecture with heavy use of templates and
-  abstract base classes.
+       Crypto++ is library for creating C++ programs which use cryptographic algorithms.
+The library uses a Pipes & Filters architecture with heavy use of templates and abstract base classes.
 endef
 
-#CONFIGURE_ARGS += \
-#	--enable-static \
-#	--enable-shared
-
-#TARGET_LDFLAGS += \
-#	-lpthread
-CMAKE_OPTIONS += -DCMAKE_CXX_FLAGS="$(FPIC)"
-CMAKE_OPTIONS += -DBUILD_STATIC=ON
-CMAKE_OPTIONS += -DBUILD_SHARED=ON
-
-UNPACK_CMD=cd $(PKG_BUILD_DIR) && unzip "$(DL_DIR)/$(PKG_SOURCE)"
 define Build/Prepare
-	$(Build/Prepare/Default)
-	cd $(PKG_BUILD_DIR) && rm -f GNUmakefile GNUmakefile-cross
+       $(Build/Prepare/Default)
+       cd $(PKG_BUILD_DIR) && rm -f GNUmakefile GNUmakefile-cross
 endef
+
 define Build/InstallDev
-	$(INSTALL_DIR) $(1)/usr/include/cryptopp
-	$(CP) $(PKG_INSTALL_DIR)/usr/include/cryptopp/* $(1)/usr/include/cryptopp/
-	$(INSTALL_DIR) $(1)/usr/lib
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libcryptopp.{a,so*} $(1)/usr/lib/
+       $(INSTALL_DIR) $(1)/usr/include/cryptopp
+       $(CP) $(PKG_INSTALL_DIR)/usr/include/cryptopp/* $(1)/usr/include/cryptopp/
+       $(INSTALL_DIR) $(1)/usr/lib
+       $(CP) $(PKG_INSTALL_DIR)/usr/lib/libcryptopp.{a,so*} $(1)/usr/lib/
 endef
 
 define Package/libcryptopp/install
-	$(INSTALL_DIR) $(1)/usr/lib
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libcryptopp.so* $(1)/usr/lib/
+       $(INSTALL_DIR) $(1)/usr/lib
+       $(CP) $(PKG_INSTALL_DIR)/usr/lib/libcryptopp.so* $(1)/usr/lib/
 endef
 
 $(eval $(call BuildPackage,libcryptopp))
