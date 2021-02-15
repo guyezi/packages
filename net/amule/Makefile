@@ -8,28 +8,18 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=aMule
-PKG_VERSION:=2.3.2
-PKG_RELEASE:=3
-PKG_REV:=4b87b20
+#PKG_VERSION:=2.3.1
+PKG_VERSION:=2.3.3
+PKG_RELEASE:=1
 
-
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-r$(PKG_REV).tar.bz2
-PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=$(PKG_REV)
-PKG_SOURCE_URL:=https://gitee.com/guyezi/amule.git
-
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
-PKG_BUILD_DEPENDS:=libgd libcryptopp
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
+PKG_SOURCE_URL:=@SF/amule
+#PKG_MD5SUM:=31724290a440943f5b05d4dca413fe02
+PKG_MD5SUM:=d74947f4c35bbea71369f6c112b9f0b8
+PKG_BUILD_DEPENDS:=libgd
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
-
-define Package/amule/config
-config AMULE_CRYPTOPP_STATIC_LINKING
-	bool "Link libcryptopp statically"
-	default n
-endef
 
 define Package/amule
   SUBMENU:=P2P
@@ -37,8 +27,7 @@ define Package/amule
   CATEGORY:=Network
   TITLE:=A multi-platform eMule-like ed2k client
   URL:=http://www.amule.org/
-  DEPENDS:=+libpng +libpthread +libncurses +libreadline +libwxbase +libupnp +libbfd \
-	$(ICONV_DEPENDS) $(INTL_DEPENDS) +!AMULE_CRYPTOPP_STATIC_LINKING:libcryptopp
+  DEPENDS:=+libpng +libpthread +libncurses +libreadline +libwxbase +libcryptoxx
 endef
 
 CONFIGURE_ARGS+= \
@@ -46,6 +35,7 @@ CONFIGURE_ARGS+= \
 	--disable-rpath \
 	--with-gnu-ld \
 	--disable-ccache \
+	--disable-debug \
 	--disable-optimize \
 	--disable-profile \
 	--disable-monolithic \
@@ -61,8 +51,7 @@ CONFIGURE_ARGS+= \
 	--disable-fileview \
 	--disable-plasmamule \
 	--without-wxdebug \
-	--enable-dlp \
-	--enable-upnp \
+	\
 	--with-zlib="$(STAGING_DIR)/usr" \
 	--with-gdlib-prefix="$(STAGING_DIR)/usr" \
 	--with-libpng-prefix="$(STAGING_DIR)/usr" \
@@ -70,40 +59,23 @@ CONFIGURE_ARGS+= \
 	--with-crypto-prefix="$(STAGING_DIR)/usr" \
 	--with-libiconv-prefix="$(ICONV_PREFIX)" \
 	--with-libintl-prefix="$(INTL_PREFIX)" \
-	--with-libupnp-prefix="$(STAGING_DIR)/usr" \
 	--without-x \
-	--disable-debug
 
-TARGET_LDFLAGS += -liconv
-
-
-define Build/Configure
-	cd $(PKG_BUILD_DIR) && sh ./autogen.sh
-	$(call Build/Configure/Default)
-endef
-
-ifeq ($(CONFIG_AMULE_CRYPTOPP_STATIC_LINKING),y)
-	SED_CMD:=sed
-else
-	SED_CMD:=true
-endif
+TARGET_LDFLAGS += \
+	-liconv
 
 define Build/Compile
-	$(SED_CMD) -i 's;^CRYPTOPP_LIBS.*;CRYPTOPP_LIBS \= "$(STAGING_DIR)/usr/lib/libcryptopp.a";g' \
-		$(PKG_BUILD_DIR)/src/Makefile
 	$(MAKE) -C $(PKG_BUILD_DIR) \
 		HOSTCC="$(HOSTCC)" \
 		DESTDIR="$(PKG_INSTALL_DIR)" \
-		all
+		all install
 endef
 
 define Package/amule/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_DIR) $(1)/usr/share/amule/webserver
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/amule{cmd,d} $(1)/usr/bin/
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/webserver/src/amuleweb $(1)/usr/bin/
-	$(CP) $(PKG_BUILD_DIR)/src/webserver/default $(1)/usr/share/amule/webserver
-
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/amule{cmd,d,web} $(1)/usr/bin/
+	$(INSTALL_DIR) $(1)/usr/share
+	$(CP) $(PKG_INSTALL_DIR)/usr/share/amule $(1)/usr/share/
 endef
 
 $(eval $(call BuildPackage,amule))
