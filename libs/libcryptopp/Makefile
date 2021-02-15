@@ -24,33 +24,33 @@ include $(INCLUDE_DIR)/package.mk
 UNZIP_CMD:=unzip -q -d $(PKG_BUILD_DIR) $(DL_DIR)/$(PKG_SOURCE)
 
 define Package/libcryptopp
-       SECTION:=libs
-       CATEGORY:=Libraries
-       TITLE:=Crypto++ is library for creating C++ programs which use cryptographic algorithms
-       URL:=https://packages.debian.org/sid/libcrypto++-dev
-       DEPENDS:=+libpthread +libstdcpp
+        SECTION:=libs
+        CATEGORY:=Libraries
+        TITLE:=Crypto++ is library for creating C++ programs which use cryptographic algorithms
+        URL:=https://packages.debian.org/sid/libcrypto++-dev
+        DEPENDS:=+libpthread +libstdcpp
 endef
 
 define Package/package/libcryptopp
-       Crypto++ is library for creating C++ programs which use cryptographic algorithms.
+  Crypto++ is library for creating C++ programs which use cryptographic algorithms.
 The library uses a Pipes & Filters architecture with heavy use of templates and abstract base classes.
 endef
 
 define Build/Prepare
-       $(Build/Prepare/Default)
-       cd $(PKG_BUILD_DIR) && rm -f GNUmakefile GNUmakefile-cross
+        $(Build/Prepare/Default)
+        cd $(PKG_BUILD_DIR) && rm -f GNUmakefile GNUmakefile-cross
 endef
 
 define Build/InstallDev
-       $(INSTALL_DIR) $(1)/usr/include/cryptopp
-       $(CP) $(PKG_INSTALL_DIR)/usr/include/cryptopp/* $(1)/usr/include/cryptopp/
-       $(INSTALL_DIR) $(1)/usr/lib
-       $(CP) $(PKG_INSTALL_DIR)/usr/lib/libcryptopp.{a,so*} $(1)/usr/lib/
+        $(INSTALL_DIR) $(1)/usr/include/cryptopp
+        $(CP) $(PKG_INSTALL_DIR)/usr/include/cryptopp/* $(1)/usr/include/cryptopp/
+        $(INSTALL_DIR) $(1)/usr/lib
+        $(CP) $(PKG_INSTALL_DIR)/usr/lib/libcryptopp.{a,so*} $(1)/usr/lib/
 endef
 
 define Package/libcryptopp/install
-       $(INSTALL_DIR) $(1)/usr/lib
-       $(CP) $(PKG_INSTALL_DIR)/usr/lib/libcryptopp.so* $(1)/usr/lib/
+        $(INSTALL_DIR) $(1)/usr/lib
+        $(CP) $(PKG_INSTALL_DIR)/usr/lib/libcryptopp.so* $(1)/usr/lib/
 endef
 
 $(eval $(call BuildPackage,libcryptopp))
