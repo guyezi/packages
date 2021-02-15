@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libcryptopp
-PKG_VERSION:=5.6.4
+PKG_VERSION:=5.6.5
 PKG_RELEASE:=1
 
 PKG_SOURCE:=cryptopp$(subst .,,$(PKG_VERSION)).zip
 PKG_SOURCE_URL:=http://www.cryptopp.com/
-PKG_MD5SUM:=4ee7e5cdd4a45a14756c169eaf2a77fc
+PKG_MD5SUM:=df5ef4647b4e978bba0cac79a83aaed5
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)/$(PKG_NAME)-$(PKG_VERSION)
 
