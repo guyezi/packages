@@ -16,12 +16,14 @@ PKG_SOURCE_URL:=http://www.cryptopp.com/
 PKG_MD5SUM:=e58bd199cec1c48f62ad6eac5c024b6c
 #PKG_MIRROR_HASH:=db38a15a6b1c337c665e2ebeb731dd0754b05e45504897d0f2fe4ae9f5ee589a
 
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)/$(PKG_NAME)-$(PKG_VERSION)
+
 PKG_FIXUP:=autoreconf
 PKG_BUILD_PARALLEL:=1
 
 include $(INCLUDE_DIR)/package.mk
 
-UNZIP_CMD:=unzip -q -d $(PKG_BUILD_DIR) $(DL_DIR)/$(PKG_SOURCE)
+UNPACK_CMD=cd $(PKG_BUILD_DIR) && unzip "$(DL_DIR)/$(PKG_SOURCE)"
 
 define Package/libcryptopp
 	SECTION:=libs
