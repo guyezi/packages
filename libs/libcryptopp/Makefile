@@ -44,8 +44,8 @@ define Build/Prepare
 endef
 
 define Build/InstallDev
-	$(INSTALL_DIR) $(1)/usr/include/cryptopp
-	$(CP) $(PKG_INSTALL_DIR)/usr/include/cryptopp/* $(1)/usr/include/cryptopp/
+	$(INSTALL_DIR) $(1)/usr/include/libcryptopp
+	$(CP) $(PKG_INSTALL_DIR)/usr/include/libcryptopp/* $(1)/usr/include/libcryptopp/
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libcryptopp.{a,so*} $(1)/usr/lib/
 endef
