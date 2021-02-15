@@ -34,12 +34,12 @@ define Package/amule
   TITLE:=A multi-platform eMule-like ed2k client
   URL:=http://www.amule.org/
   DEPENDS:=+libpng +libpthread +libncurses +libreadline +libwxbase +libupnp +libbfd \
-        $(ICONV_DEPENDS) $(INTL_DEPENDS) +!AMULE_CRYPTOPP_STATIC_LINKING:libcryptopp
+       $(ICONV_DEPENDS) $(INTL_DEPENDS) +!AMULE_CRYPTOPP_STATIC_LINKING:libcryptopp
 endef
 
 define Package/amule/config
-       config AMULE_CRYPTOPP_STATIC_LINKING
-             bool "Link libcryptopp statically"
+    config AMULE_CRYPTOPP_STATIC_LINKING
+         bool "Link libcryptopp statically"
             default n
 endef
 
@@ -66,6 +66,7 @@ CONFIGURE_ARGS+= \
 	--without-wxdebug \
         --enable-dlp \
         --enable-upnp \
+        \
 	--with-zlib="$(STAGING_DIR)/usr" \
 	--with-gdlib-prefix="$(STAGING_DIR)/usr" \
 	--with-libpng-prefix="$(STAGING_DIR)/usr" \
@@ -74,7 +75,7 @@ CONFIGURE_ARGS+= \
 	--with-libiconv-prefix="$(ICONV_PREFIX)" \
 	--with-libintl-prefix="$(INTL_PREFIX)" \
         --with-libupnp-prefix="$(STAGING_DIR)/usr" \
-	--without-x
+	--without-x \
 
 MAKE_FLAGS += HOSTCC="$(HOSTCC)"
 
@@ -105,3 +106,4 @@ define Package/amule/install
 endef
 
 $(eval $(call BuildPackage,amule))
+
