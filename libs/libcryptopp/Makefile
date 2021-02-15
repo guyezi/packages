@@ -20,8 +20,10 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)/$(PKG_NAME)$(PKG_VERSION)
 
 PKG_FIXUP:=autoreconf
 PKG_BUILD_PARALLEL:=1
+CMAKE_INSTALL:=1
 
 include $(INCLUDE_DIR)/package.mk
+include $(INCLUDE_DIR)/cmake.mk
 
 UNPACK_CMD=cd $(PKG_BUILD_DIR) && unzip "$(DL_DIR)/$(PKG_SOURCE)"
 
@@ -32,6 +34,16 @@ define Package/libcryptopp
 	URL:=https://packages.debian.org/sid/libcrypto++-dev
 	DEPENDS:=+libpthread +libstdcpp
 endef
+
+#CONFIGURE_ARGS += \
+#	--enable-static \
+#	--enable-shared
+
+#TARGET_LDFLAGS += \
+#	-lpthread
+CMAKE_OPTIONS += -DCMAKE_CXX_FLAGS="$(FPIC)"
+CMAKE_OPTIONS += -DBUILD_STATIC=ON
+CMAKE_OPTIONS += -DBUILD_SHARED=ON
 
 define Package/package/libcryptopp
 	Crypto++ is library for creating C++ programs which use cryptographic algorithms.
