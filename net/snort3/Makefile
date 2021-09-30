@@ -7,7 +7,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=snort3
 PKG_VERSION:=3.1.0.0
-PKG_RELEASE:=1
+PKG_RELEASE:=3
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://www.snort.org/downloads/snortplus/
@@ -45,6 +45,8 @@ endef
 CMAKE_OPTIONS += \
 	-DUSE_TIRPC:BOOL=YES \
 	-DENABLE_STATIC_DAQ:BOOL=NO \
+	-DDAQ_INCLUDE_DIR=$(STAGING_DIR)/usr/include/daq3 \
+	-DDAQ_LIBRARIES_DIR_HINT:PATH=$(STAGING_DIR)/usr/lib/daq3 \
 	-DENABLE_COREFILES:BOOL=NO \
 	-DENABLE_GDB:BOOL=NO \
 	-DMAKE_DOC:BOOL=NO \
@@ -54,17 +56,22 @@ CMAKE_OPTIONS += \
 	-DHAVE_LIBUNWIND=OFF \
 	-DHAVE_LZMA=OFF
 
-TARGET_CFLAGS  += -I$(STAGING_DIR)/usr/include/tirpc
-TARGET_LDFLAGS += -ltirpc
+TARGET_CFLAGS  += -I$(STAGING_DIR)/usr/include/daq3 -I$(STAGING_DIR)/usr/include/tirpc
+TARGET_LDFLAGS += -L$(STAGING_DIR)/usr/lib/daq3 -ltirpc
 
 define Package/snort3/conffiles
 /etc/config/snort
+/etc/snort/
 endef
 
 define Package/snort3/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) \
 		$(PKG_INSTALL_DIR)/usr/bin/snort  \
+		$(1)/usr/bin/
+
+	$(INSTALL_BIN) \
+		$(PKG_INSTALL_DIR)/usr/bin/snort2lua  \
 		$(1)/usr/bin/
 
 	$(INSTALL_BIN) \
@@ -86,6 +93,9 @@ define Package/snort3/install
 		$(1)/usr/share/lua/
 
 	$(INSTALL_DIR) $(1)/etc/snort
+	$(INSTALL_CONF) \
+		$(PKG_INSTALL_DIR)/usr/etc/snort/*.lua \
+		$(1)/etc/snort
 
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) \

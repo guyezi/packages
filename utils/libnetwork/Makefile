@@ -12,9 +12,9 @@ GO_PKG_BUILD_PKG:= \
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://$(GO_PKG)
-PKG_SOURCE_VERSION:=fa125a3512ee0f6187721c88582bf8c4378bd4d7
-PKG_SOURCE_DATE:=2020-12-15
-PKG_MIRROR_HASH:=f6fcc6c900c1d542dfede0f53691108f12b63ff20ecf870eebc0aa2df1848b24
+PKG_SOURCE_VERSION:=64b7a4574d1426139437d20e81c0b6d391130ec8
+PKG_SOURCE_DATE:=2021-05-25
+PKG_MIRROR_HASH:=4e3463c3d723a7a9b9d682515084e667feb24ca297cfbc05ce1768bed6249752
 
 PKG_MAINTAINER:=Gerard Ryan <G.M0N3Y.2503@gmail.com>
 
@@ -37,6 +37,8 @@ define Package/libnetwork/description
 Libnetwork provides a native Go implementation for connecting containers.
 The goal of libnetwork is to deliver a robust Container Network Model that provides a consistent programming interface and the required network abstractions for applications.
 endef
+
+GO_PKG_BUILD_VARS += GO111MODULE=auto
 
 define Package/libnetwork/install
 	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
